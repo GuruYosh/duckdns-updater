@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## ACTUALIZADOR DE IP EN DUCKDNS.ORG
+##
+## Es necesario tener disponible el comando dig para resolver peticiones de dominio
+
 domain="DOMINIO"
 token="T-O-K-E-N"
 logfile="duckdns.log"
