@@ -2,7 +2,9 @@
 
 ## ACTUALIZADOR DE IP EN DUCKDNS.ORG
 ##
-## Es necesario tener disponible el comando dig para resolver peticiones de dominio
+## Es necesario tener disponible el comando dig para resolver peticiones de dominio 
+## Es necesario tener disponible el comando curl para transferir datos a través del protocolo https 
+
 
 domain="DOMINIO"
 token="T-O-K-E-N"
