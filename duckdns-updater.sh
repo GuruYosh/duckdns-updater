@@ -11,6 +11,11 @@ token="T-O-K-E-N"
 logfile="duckdns.log"
 timewait=10
 
+if ! [ $(which dig) ] || ! [ $(which curl) ]; then
+        echo $(date +"%F %T") "Los comandos dig y curl deben estar instalados en el sistema" >> $logfile
+        exit 1
+fi
+
 ## Lista de servidores para preguntar IP WAN
 server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "ipecho.net/plain" "ipinfo.io/ip")
 rand_server=$(($RANDOM % ${#server_ip[@]}))
@@ -28,8 +33,8 @@ result="NO"
 if [ "$ip" != "$ip_dns" ];
 then
         result="$(curl -s "https://www.duckdns.org/update?domains=$domain&token=$token&ip=")"
-        fecha=$(date +"%F %T")
-        echo $fecha  ${server_ip[$rand_server]} $dnsserver $ip_dns $ip $result >> $logfile
+
+        echo $(date +"%F %T")  ${server_ip[$rand_server]} $dnsserver $ip_dns $ip $result >> $logfile
 
         sleep $timewait
 
@@ -37,7 +42,7 @@ then
 
         if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ];
         then
-                fecha=$(date +"%F %T")
-                echo $fecha "Error: "$ip" no actualizada correctamente" >> $logfile
+                echo $(date +"%F %T") "Error "$ip" no actualizada correctamente" >> $logfile
+                exit 1
         fi
 fi
