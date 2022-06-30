@@ -9,9 +9,10 @@
 domain="DOMINIO"
 token="T-O-K-E-N"
 logfile="duckdns.log"
+timewait=10
 
 ## Lista de servidores para preguntar IP WAN
-server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "http://ipecho.net/plain")
+server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "ipecho.net/plain" "ipinfo.io/ip")
 rand_server=$(($RANDOM % ${#server_ip[@]}))
 
 ## Elección de servidor DNS al que preguntar
@@ -26,16 +27,17 @@ result="NO"
 
 if [ "$ip" != "$ip_dns" ];
 then
-	result="$(curl -s "https://www.duckdns.org/update?domains=$domain&token=$token&ip=")"
-	fecha=$(date +"%F %T")
-	echo $fecha  ${server_ip[$rand_server]} $dnsserver $ip_dns $ip $result >> $logfile
+        result="$(curl -s "https://www.duckdns.org/update?domains=$domain&token=$token&ip=")"
+        fecha=$(date +"%F %T")
+        echo $fecha  ${server_ip[$rand_server]} $dnsserver $ip_dns $ip $result >> $logfile
 
-	sleep 10
-	
-	ip_nueva="$(dig @"$dnsserver" "$domain".duckdns.org +short)"
+        sleep $timewait
 
-	if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ]; 
-	then
-			echo "Error: $ip no actualizada correctamente" >> $logfile
-	fi
+        ip_nueva="$(dig @"$dnsserver" "$domain".duckdns.org +short)"
+
+        if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ];
+        then
+                fecha=$(date +"%F %T")
+                echo $fecha "Error: "$ip" no actualizada correctamente" >> $logfile
+        fi
 fi
