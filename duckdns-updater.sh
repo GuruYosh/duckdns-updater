@@ -8,7 +8,7 @@
 
 domain="DOMINIO"
 token="T-O-K-E-N"
-logfile="duckdns.log"
+logfile="/var/log/duckdns.log"    # Lugar recomendado, El usuario que lanza el script debe tener permisos de escritura en el fichero
 timewait=10
 
 if ! [ $(which dig) ] || ! [ $(which curl) ]; then
