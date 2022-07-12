@@ -11,8 +11,20 @@ token="T-O-K-E-N"
 logfile="/var/log/duckdns.log"    # Lugar recomendado, El usuario que lanza el script debe tener permisos de escritura en el fichero
 timewait=10
 
+error=0
+
 function loguear {
 	echo $(date +"%F %T") $1 >> $logfile
+}
+
+function isValidIpAddr() {
+    # return code only version
+    local ipaddr="$1";
+    [[ ! $ipaddr =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && return 1;
+    for quad in $(echo "${ipaddr//./ }"); do
+        (( $quad >= 0 && $quad <= 255 )) && continue;
+        return 1;
+    done
 }
 
 
@@ -21,14 +33,28 @@ if ! [ $(which dig) ] || ! [ $(which curl) ]; then
 	exit 1
 fi
 
-
 server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "ipecho.net/plain" "ipinfo.io/ip")
 rand_server=$(($RANDOM % ${#server_ip[@]}))
 
 dnsserver=$(echo "ns$(( 1 + $RANDOM % 6)).duckdns.org")
+
 ip_dns="$(dig @"$dnsserver" "$domain".duckdns.org +short)"
 
+isValidIpAddr $ip_dns
+
+error=$(( $error + $? ))
+
 ip="$(curl -s ${server_ip[$rand_server]})"
+
+isValidIpAddr $ip
+
+error=$(( $error + $? ))
+
+if [ $error -ne 0 ];
+then
+	loguear "Error al obtener IP @(${server_ip[$rand_server]} $dnsserver): $ip $ip_dns"
+	exit 2
+fi
 
 result="NO"
 
@@ -41,10 +67,20 @@ then
 	sleep $timewait
 
 	ip_nueva="$(dig @"$dnsserver" "$domain".duckdns.org +short)"
-	
-	if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ];
+
+	isValidIpAddr $ip_nueva
+
+	error=$(( $error + $? ))
+
+	if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ] && [ $error -eq 0 ];
 	then
-        	loguear "Error $ip no actualizada correctamente"
-		exit 1
+        loguear "Error IP ($ip) no actualizada correctamente"
+		exit 3
+	else 
+		if [ "$ip_nueva" != "$ip" ] && [ $result = "OK" ] && [ $error -ne 0 ];
+		then
+			loguear "Error al obtener IP @($dnsserver): $ip_nueva"
+			exit 4
+		fi
 	fi
 fi
