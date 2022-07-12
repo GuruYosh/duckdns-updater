@@ -18,7 +18,9 @@ function loguear {
 }
 
 function isValidIpAddr() {
-    # return code only version
+    # https://stackoverflow.com/questions/13777387/check-for-ip-validity/
+    # Autor: zpangwin & shannonman & Mitch Frazier
+    
     local ipaddr="$1";
     [[ ! $ipaddr =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && return 1;
     for quad in $(echo "${ipaddr//./ }"); do
