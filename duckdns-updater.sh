@@ -56,7 +56,7 @@ error=$(( $error + $? ))
 
 # DNS de duckdns
 
-dnsserver=$(echo "ns$(( 1 + $RANDOM % 6)).duckdns.org")
+dnsserver=$(echo "ns$(( 1 + $RANDOM % 9)).duckdns.org")
 
 # Obtenemos IP del DNS
 
