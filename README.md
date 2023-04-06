@@ -10,7 +10,8 @@ Actualiza IP de la WAN en [duckdns.org](https://www.duckdns.org/) sólo si es ne
     - icanhazip.com
     - ipecho.net/plain
     - ipinfo.io/ip
-- __Sólo si IP del DNS y la IP de la WAN son diferentes se actualiza la IP para el dominio en duckdns.org__
+    - api.ipify.org
+- __Sólo si la IP resuelta por el DNS y la IP de la WAN son diferentes se actualiza la IP para el dominio en duckdns.org__
 - Después de actualizar la IP espera unos segundos para verificar que se ha actualizado.
 
 
