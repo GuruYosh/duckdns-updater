@@ -43,7 +43,7 @@ fi
 
 # Servidores para obtener la IP (WAN)
 
-server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "ipecho.net/plain" "ipinfo.io/ip")
+server_ip=("ifconfig.me" "ifconfig.co" "icanhazip.com" "ipecho.net/plain" "ipinfo.io/ip" "api.ipify.org")
 rand_server=$(($RANDOM % ${#server_ip[@]}))
 
 # Obtenemos IP de la WAN
